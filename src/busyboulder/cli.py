@@ -114,7 +114,7 @@ def busyboulder(gym):
     for gym in gym_data:
         full_gym_name = gym_options.get(gym.short_name, "UNKNOWN")
         click.secho(f"{full_gym_name} ({gym.short_name})", bold=True)
-        click.secho(f"Visitors: {gym.curr_occupancy}, Capacity {gym.capacity}, {gym.percent:.1f}% full.")
+        click.secho(f"Visitors: [{gym.curr_occupancy}], Capacity: [{gym.capacity}], [{gym.percent:.1f}%] full.")
         click.secho(f"Last updated: {gym.last_updated}")
 
 if __name__ == "__main__":
