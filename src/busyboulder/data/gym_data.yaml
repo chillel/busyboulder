@@ -1,5 +1,6 @@
 ---
 gyms:
+  # Washington, USA
   - primary: "Seattle Bouldering Project"
     pkg_id: "314b60a77a6eada788f8cd7046931fc5"
     alt:
@@ -16,3 +17,8 @@ gyms:
     alt:
       - "vertical world"
       - "vw"
+  # United Kingdom
+  - primary: "Vauxwall"
+    pkg_id: "a67951f8b19504c3fd14ef92ef27454d"
+    alt:
+      - "vauxwall"
