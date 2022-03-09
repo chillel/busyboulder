@@ -35,7 +35,7 @@ class GymData:
         self.capacity = self.gym_info['capacity']
         self.percent = 100.0 * (self.curr_occupancy / self.capacity)
         self.last_updated = self.gym_info['lastUpdate'].replace(NON_BREAK_SPACE, " ")
-        
+
 
 
 def load_gym_config() -> dict:
@@ -83,7 +83,7 @@ def busyboulder(gym):
     response = requests.get(url, headers=headers)
 
     html = response.text
-    
+
     # Use Beautiful Soup to find the selector options
     soup = BeautifulSoup(html, 'html.parser')
     gym_switcher = soup.find(id='gym-switcher').find_all('option')
@@ -96,20 +96,25 @@ def busyboulder(gym):
     # Find the 'var data = {...}' object which contains the useful info
     all_scripts = soup.find_all('script')
     gym_data = []
-    for _, script in enumerate(all_scripts):
-        if "var data = {" in script.text:
-            # Find the data variable in script section
 
-            pattern = re.compile(r"^\s+var data = ({.*},\s+});$", re.MULTILINE | re.DOTALL)
-            match = pattern.match(script.text)
-            if match == None:
-                click.secho("No gyms found. Goodbye!", err=True)
-                click.Abort()
+    
+    pattern = r"^\s+var data = ({.*},\s+});$"
 
-            raw_data = match.groups()[0]
-            data = ast.literal_eval(raw_data)
-            for short_name, info in data.items():
-                gym_data.append(GymData(short_name, info))
+    for idx, script in enumerate(all_scripts):
+        script_str = script.prettify()
+        # Find the data variable in script section
+        match = re.search(pattern, script_str, re.MULTILINE | re.DOTALL)
+        if match == None:
+            continue # check the next script for data
+
+        raw_data = match.groups()[0]
+        data = ast.literal_eval(raw_data)
+        for short_name, info in data.items():
+            gym_data.append(GymData(short_name, info))
+    
+    if not gym_data:
+        click.secho("No gym data found. Goodbye!", err=True)
+        click.Abort()
 
     for gym in gym_data:
         full_gym_name = gym_options.get(gym.short_name, "UNKNOWN")
@@ -118,5 +123,4 @@ def busyboulder(gym):
         click.secho(f"Last updated: {gym.last_updated}")
 
 if __name__ == "__main__":
-
     busyboulder()
