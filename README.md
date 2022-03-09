@@ -29,7 +29,7 @@ $ busyboulder --help
 
 To get occupancy info for "Seattle Bouldering Project", try the following:
 <pre>
-$ busyboulder --gym "sbp"
+$ busyboulder sbp
 
 <b>Seattle Bouldering Project Poplar (POP)</b>
 Visitors: 115, Capacity 880, 13% full.
@@ -40,6 +40,11 @@ Last updated: Last updated: 3 mins ago (9:10 PM)
 <b>Seattle Bouldering Project Fremont (FRE)</b>
 Visitors: 62, Capacity 441, 14% full.
 Last updated: Last updated: now  (9:13 PM)
+</pre>
+
+Be sure to use quotes when using multiple words:
+<pre>
+$ busyboulder "stone gardens"
 </pre>
 
 ## Supporting New Gyms
