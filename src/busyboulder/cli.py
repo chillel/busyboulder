@@ -12,7 +12,7 @@ except:
 
 from bs4 import BeautifulSoup
 
-DEFAULT_GYM = "sbp"
+DEFAULT_GYM = "sg"
 NON_BREAK_SPACE = "&nbsp" # to clean up HTML
 CONFIG_FILE = pkg_resources.read_text("busyboulder.data", "gym_data.yaml")
 BASE_URL="https://portal.rockgympro.com/portal/public"
