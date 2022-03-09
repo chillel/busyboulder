@@ -22,6 +22,10 @@ gyms:
     pkg_id: "a67951f8b19504c3fd14ef92ef27454d"
     alt:
       - "vauxwall"
+  - primary: "Unknown"
+    pkg_id: "6b63f758ef4154be4a09183456dff97d"
+    alt:
+      - "unknown"
   # TODO there's only an LSH object in the data variable
   #      Q: do they turn off occupancy for some gyms?
   # - primary: "The Climbing Hangar"

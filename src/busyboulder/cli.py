@@ -55,19 +55,29 @@ def get_all_gym_names() -> List[str]:
     """ Get all the gym alternative names """
     return list(build_gym_map(load_gym_config()).keys())
 
-def get_all_gym_names_str() -> str:
+def get_all_gym_names_str(sep=", ") -> str:
     """ Get all the gym alternative names as a comma separated name """
-    return ', '.join(get_all_gym_names())
+    return sep.join(get_all_gym_names())
+
+def docstring(docstr, sep="\n"):
+    """
+    Decorator: Append to a function's docstring.
+    """
+    def _decorator(func):
+        if func.__doc__ == None:
+            func.__doc__ = docstr
+        else:
+            func.__doc__ = sep.join([func.__doc__, docstr])
+        return func
+    return _decorator
 
 @click.command()
-@click.option('--gym',
-              help=f"Specify a gym chain. Any of the following are acceptable: [{get_all_gym_names_str()}]",
-              show_default=True,
+@click.argument('gym',
               metavar="GYM",
               type=click.Choice(get_all_gym_names(), case_sensitive=False),
               default=DEFAULT_GYM)
+@docstring(f"Specify a gym chain to see how busy the gyms are. Choices are: {get_all_gym_names_str()}")
 def busyboulder(gym):
-
     gym_map = build_gym_map(load_gym_config())
 
     primary_chain_name, gym_pkg_id = gym_map.get(gym.lower(), None)
@@ -86,11 +96,16 @@ def busyboulder(gym):
 
     # Use Beautiful Soup to find the selector options
     soup = BeautifulSoup(html, 'html.parser')
-    gym_switcher = soup.find(id='gym-switcher').find_all('option')
+    gym_switcher = soup.find(id='gym-switcher')
+    if gym_switcher == None:
+        click.secho("Gym does not support live occupancy. Goodbye.", err=True)
+        raise click.Abort()
+    
+    gym_switcher_options = gym_switcher.find_all('option')
 
     # Construct a dict of short gym name -> human-readable name
     # e.g. POP -> Seattle Bouldering Project Popular
-    gym_options = dict([(str(g['value']), str(g.text)) for g in gym_switcher if g['value'] != ""])
+    gym_options = dict([(str(g['value']), str(g.text)) for g in gym_switcher_options if g['value'] != ""])
 
     # Use Beautiful Soup to find the scripts in the page
     # Find the 'var data = {...}' object which contains the useful info
@@ -114,7 +129,7 @@ def busyboulder(gym):
     
     if not gym_data:
         click.secho("No gym data found. Goodbye!", err=True)
-        click.Abort()
+        raise click.Abort()
 
     for gym in gym_data:
         full_gym_name = gym_options.get(gym.short_name, "UNKNOWN")
